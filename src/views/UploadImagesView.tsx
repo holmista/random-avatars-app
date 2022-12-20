@@ -1,9 +1,15 @@
 import React, { useState } from "react";
+import axios from "axios";
 import ImageUploadInput from "../components/form/ImageUploadInput";
 import Image from "../components/form/Image";
 
 const Form: React.FC = () => {
   const [images, setImages] = useState<Blob[]>([]);
+  const [name, setName] = useState("");
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -12,17 +18,30 @@ const Form: React.FC = () => {
     }
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (images.length === 0) return;
     const formData = new FormData();
     images.forEach((image) => {
       formData.append("images", image);
     });
+    formData.append("resource", name);
+    try {
+      console.log("here");
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACK_URL}/images`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
-    <form className="w-full max-w-lg mx-auto my-10">
+    <form className="w-full max-w-lg mx-auto my-10" onSubmit={(e) => submit(e)}>
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
@@ -45,10 +64,17 @@ const Form: React.FC = () => {
           />
         ))}
       </div>
-      <div className="flex justify-center">
+      <div className="relative rounded-md shadow-sm">
+        <input
+          className="form-input py-3 px-4 block w-full leading-5 rounded-md purple-500 placeholder-purple-500 focus:outline-none focus:shadow-outline-purple transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+          placeholder="name"
+          value={name}
+          onChange={handleNameChange}
+        />
+      </div>
+      <div className="flex justify-center mt-10">
         <button
-          type="button"
-          onClick={(e: React.FormEvent) => submit(e)}
+          type="submit"
           className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full"
         >
           Submit
