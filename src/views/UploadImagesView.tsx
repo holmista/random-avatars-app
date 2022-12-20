@@ -8,6 +8,7 @@ const Form: React.FC = () => {
   const [images, setImages] = useState<Blob[]>([]);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   let timeoutId = 0;
 
@@ -43,11 +44,17 @@ const Form: React.FC = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+      setImages([]);
+      setName("");
+      setError("files uploaded successfully, wait till reviewed");
+      setSuccess(true);
     } catch (err: any) {
       console.log(err);
       setError(err.response.data.error);
+      setSuccess(false);
       timeoutId = window.setTimeout(() => {
         setError("");
+        setSuccess(false);
       }, 5000);
     }
   };
@@ -84,7 +91,7 @@ const Form: React.FC = () => {
           onChange={handleNameChange}
         />
       </div>
-      {error && <ErrorMessage error={error} />}
+      {error && <ErrorMessage status={error} success={success} />}
       <div className="flex justify-center mt-10">
         <button
           type="submit"
