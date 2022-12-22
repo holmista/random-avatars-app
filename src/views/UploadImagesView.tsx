@@ -60,12 +60,15 @@ const Form: React.FC = () => {
   };
 
   return (
-    <form className="w-full max-w-lg mx-auto my-10" onSubmit={(e) => submit(e)}>
+    <form
+      className="w-full max-w-lg mx-auto py-10 "
+      onSubmit={(e) => submit(e)}
+    >
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
             htmlFor="images"
-            className="block uppercase tracking-wide text-purple-700 text-xs font-bold mb-2"
+            className="block uppercase tracking-wide text-white text-xs font-bold mb-2"
           >
             Choose images
           </label>
@@ -85,7 +88,7 @@ const Form: React.FC = () => {
       </div>
       <div className="relative rounded-md shadow-sm">
         <input
-          className="form-input py-3 px-4 block w-full leading-5 rounded-md purple-500 placeholder-purple-500 focus:outline-none focus:shadow-outline-purple transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+          className="form-input py-3 px-4 block w-full leading-5 rounded-md purple-500 placeholder-[#534e54] focus:outline-none focus:shadow-outline-purple transition duration-150 ease-in-out sm:text-sm sm:leading-5"
           placeholder="name"
           value={name}
           onChange={handleNameChange}
@@ -95,7 +98,7 @@ const Form: React.FC = () => {
       <div className="flex justify-center mt-10">
         <button
           type="submit"
-          className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mb-60"
+          className="bg-[#806ef9] hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mb-60"
         >
           Submit
         </button>

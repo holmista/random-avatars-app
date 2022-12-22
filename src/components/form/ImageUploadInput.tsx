@@ -6,7 +6,7 @@ interface ImageUploadInputProps {
 
 const ImageUploadInput: React.FC<ImageUploadInputProps> = ({ onChange }) => {
   return (
-    <label className="px-4 py-2 bg-purple-500 text-white rounded-full cursor-pointer hover:bg-purple-600">
+    <label className="px-4 py-2 bg-[#806ef9] text-white rounded-full cursor-pointer hover:bg-purple-700">
       Choose Images
       <input
         type="file"
