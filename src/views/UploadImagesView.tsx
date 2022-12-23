@@ -25,6 +25,7 @@ const Form: React.FC = () => {
     if (files) {
       setImages([...images, ...files]);
     }
+    console.log(files);
   };
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {

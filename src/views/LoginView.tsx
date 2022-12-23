@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface FormValues {
   id: string;
   password: string;
 }
 
+interface Errors {
+  id?: string;
+  password?: string;
+}
+
 const validate = (values: FormValues) => {
-  const errors: FormValues = {
-    id: "",
-    password: "",
-  };
+  const errors: Errors = {};
   if (!values.id) {
     errors.id = "ID is Required";
   }
@@ -21,8 +25,17 @@ const validate = (values: FormValues) => {
 };
 
 const LoginForm: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const navigate = useNavigate();
+
+  const submitForm = async (values: FormValues) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BACK_URL}/auth/login`, values, {
+        withCredentials: true,
+      });
+      navigate("/admin/all-resources");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const formik = useFormik({
@@ -32,7 +45,7 @@ const LoginForm: React.FC = () => {
     },
     validate,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      submitForm(values);
     },
   });
 
