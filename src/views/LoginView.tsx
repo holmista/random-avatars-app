@@ -32,7 +32,7 @@ const LoginForm: React.FC = () => {
       await axios.post(`${import.meta.env.VITE_BACK_URL}/auth/login`, values, {
         withCredentials: true,
       });
-      navigate("/admin/all-resources");
+      navigate("/admin/unapproved-resources");
     } catch (err) {
       console.log(err);
     }
