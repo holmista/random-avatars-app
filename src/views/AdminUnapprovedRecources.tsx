@@ -7,7 +7,7 @@ interface IunapprovedResources {
   resources: string[];
 }
 
-const AdminUnapprovedRecources = () => {
+const AdminUnapprovedRecources: React.FC = () => {
   const fetchUnapprovedResources = async () => {
     const res = await fetch(
       `${import.meta.env.VITE_BACK_URL}/resource/unapproved-resources`
@@ -15,22 +15,24 @@ const AdminUnapprovedRecources = () => {
     return res.json();
   };
   const res = useQuery("getUnapprovedResources", fetchUnapprovedResources);
+  console.log(res);
   if (res.isLoading) {
     return <LoadingSpinner />;
   }
   if (res.error) {
     return <span>Error</span>;
-  } else {
-    return (
-      <div className="flex justify-center w-screen">
-        <div className="grid grid-cols-3 gap-4 w-3/4 mt-10">
-          {res.data.resources.map((resource: string) => (
-            <ResourceCard key={resource} text={resource} />
-          ))}
-        </div>
-      </div>
-    );
   }
+  // if (res.data) {
+  return (
+    <div className="flex justify-center w-screen">
+      <div className="grid grid-cols-3 gap-4 w-3/4 mt-10">
+        {res.data.resources.map((resource: string) => (
+          <ResourceCard key={resource} text={resource} />
+        ))}
+      </div>
+    </div>
+  );
+  // }
 };
 
 export default AdminUnapprovedRecources;
