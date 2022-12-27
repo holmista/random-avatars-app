@@ -1,110 +1,132 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import ImageUploadInput from "../components/form/ImageUploadInput";
 import Image from "../components/form/Image";
 import ErrorMessage from "../components/form/ErrorMessage";
+import { Formik, Form as FormF, Field } from "formik";
+import { useMutation } from "react-query";
+
+interface FormValues {
+  name: string;
+  images: Blob[];
+}
+
+interface Errors {
+  name?: string;
+  images?: string;
+}
+
+const validate = (values: FormValues) => {
+  const errors: Errors = {};
+  if (!values.name) {
+    errors.name = "name is Required";
+  }
+  if (values.images.length !== 10) {
+    errors.images = "10 images should be uploaded";
+  }
+  return errors;
+};
 
 const Form: React.FC = () => {
-  const [images, setImages] = useState<Blob[]>([]);
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-
-  let timeoutId = 0;
-
-  useEffect(() => {
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      setImages([...images, ...files]);
-    }
-    console.log(files);
-  };
-
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (images.length === 0) return;
+  const createRawImages = (data: FormValues) => {
     const formData = new FormData();
-    images.forEach((image) => {
+    console.log(data.images);
+    data.images.forEach((image) => {
       formData.append("images", image);
     });
-    formData.append("resource", name);
-    try {
-      console.log("here");
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACK_URL}/images`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setImages([]);
-      setName("");
-      setError("files uploaded successfully, wait till reviewed");
-      setSuccess(true);
-    } catch (err: any) {
-      console.log(err);
-      setError(err.response.data.error);
-      setSuccess(false);
-      timeoutId = window.setTimeout(() => {
-        setError("");
-        setSuccess(false);
-      }, 5000);
+    formData.append("resource", data.name);
+    for (const key of formData.keys()) {
+      console.log(key);
     }
+    return axios.post(`${import.meta.env.VITE_BACK_URL}/images`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   };
 
+  const mutation = useMutation("createRawImages", createRawImages);
+  const initialFormValues: FormValues = { name: "", images: [] };
+
   return (
-    <form
-      className="w-full max-w-lg mx-auto py-10 "
-      onSubmit={(e) => submit(e)}
+    <Formik
+      onSubmit={async (values, { resetForm }) => {
+        mutation.mutate(values);
+        if (mutation.data) {
+          resetForm();
+        }
+      }}
+      initialValues={initialFormValues}
+      validate={validate}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      <div className="flex flex-wrap -mx-3 mb-6">
-        <div className="w-full px-3">
-          <label
-            htmlFor="images"
-            className="block uppercase tracking-wide text-white text-xs font-bold mb-2"
-          >
-            Choose images
-          </label>
-          <div className="relative">
-            <ImageUploadInput onChange={handleChange} />
+      {({ errors, handleChange, values, setFieldValue, resetForm }) => (
+        <FormF className="w-full max-w-lg mx-auto py-10">
+          <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="w-full px-3">
+              <label
+                htmlFor="images"
+                className="block uppercase tracking-wide text-white text-xs font-bold mb-2"
+              >
+                Choose images
+              </label>
+              <div className="relative">
+                <ImageUploadInput
+                  onChange={(e) => {
+                    e.target.files &&
+                      setFieldValue("images", [
+                        ...values.images,
+                        ...e.target.files,
+                      ]);
+                  }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="flex flex-wrap -mx-3 mb-6">
-        {images.map((image, index) => (
-          <Image
-            key={index}
-            src={URL.createObjectURL(image)}
-            onRemove={() => setImages(images.filter((_, i) => i !== index))}
-          />
-        ))}
-      </div>
-      <div className="relative rounded-md shadow-sm">
-        <input
-          className="form-input py-3 px-4 block w-full leading-5 rounded-md purple-500 placeholder-[#534e54] focus:outline-none focus:shadow-outline-purple transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-          placeholder="name"
-          value={name}
-          onChange={handleNameChange}
-        />
-      </div>
-      {error && <ErrorMessage status={error} success={success} />}
-      <div className="flex justify-center mt-10">
-        <button
-          type="submit"
-          className="bg-[#806ef9] hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mb-60"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
+          <div className="flex flex-wrap -mx-3 mb-6">
+            {values.images.map((image, index) => (
+              <Image
+                key={index}
+                src={URL.createObjectURL(image)}
+                onRemove={() => {
+                  console.log("removed");
+                  setFieldValue(
+                    "images",
+                    values.images.filter((_, i) => i !== index)
+                  );
+                }}
+              />
+            ))}
+          </div>
+          <div className="relative rounded-md shadow-sm">
+            <Field
+              className="form-input py-3 px-4 block w-full leading-5 rounded-md purple-500 placeholder-[#534e54] focus:outline-none focus:shadow-outline-purple transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+              placeholder="name"
+              name="name"
+              value={values.name}
+              onChange={handleChange}
+            />
+          </div>
+          {errors.name && <ErrorMessage status={errors.name} success={false} />}
+          {errors.images && (
+            <ErrorMessage status={errors.images} success={false} />
+          )}
+          {mutation.data && (
+            <ErrorMessage
+              status="resource added successfully, wait till reviewed"
+              success={true}
+            />
+          )}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="bg-[#806ef9] hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full mb-60"
+            >
+              Submit
+            </button>
+          </div>
+        </FormF>
+      )}
+    </Formik>
   );
 };
 

@@ -19,11 +19,11 @@ const ErrorMessage: React.FC<Props> = ({ status, success }) => {
       opacity: 1,
       transform: "translate3d(0, 0, 0)",
     });
-    const timeoutId = setTimeout(() => {
-      setShowError(false);
-    }, 5000);
+    // const timeoutId = setTimeout(() => {
+    //   setShowError(false);
+    // }, 5000);
 
-    return () => clearTimeout(timeoutId);
+    // return () => clearTimeout(timeoutId);
   }, []);
 
   if (!showError) {
