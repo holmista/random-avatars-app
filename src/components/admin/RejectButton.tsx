@@ -3,9 +3,10 @@ import { useQuery, useMutation } from "react-query";
 import LoadingSpinnerForComponents from "../common/LoadingSpinnerForComponents";
 import { useNavigate } from "react-router-dom";
 import ErrorMessage from "../form/ErrorMessage";
+import { AxiosResponse } from "axios";
 
 interface ApproveButtonProps {
-  apiCall: () => Promise<void>;
+  apiCall: () => Promise<AxiosResponse<any, any>>;
 }
 
 const RejectButton: React.FC<ApproveButtonProps> = ({ apiCall }) => {
