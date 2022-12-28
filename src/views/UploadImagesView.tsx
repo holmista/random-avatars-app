@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import axios from "axios";
 import ImageUploadInput from "../components/form/ImageUploadInput";
 import Image from "../components/form/Image";
 import ErrorMessage from "../components/form/ErrorMessage";
-import { Formik, Form as FormF, Field } from "formik";
+import { Formik, Form as FormF, Field, FormikState } from "formik";
 import { useMutation } from "react-query";
 
 interface FormValues {
@@ -28,6 +28,7 @@ const validate = (values: FormValues) => {
 };
 
 const Form: React.FC = () => {
+  const resetRef = useRef<any>(null);
   const createRawImages = (data: FormValues) => {
     const formData = new FormData();
     console.log(data.images);
@@ -43,16 +44,18 @@ const Form: React.FC = () => {
     });
   };
 
-  const mutation = useMutation("createRawImages", createRawImages);
+  const mutation = useMutation("createRawImages", createRawImages, {
+    onSuccess: () => {
+      if (resetRef.current) resetRef.current();
+    },
+  });
   const initialFormValues: FormValues = { name: "", images: [] };
 
   return (
     <Formik
       onSubmit={async (values, { resetForm }) => {
+        resetRef.current = resetForm;
         mutation.mutate(values);
-        if (mutation.data) {
-          resetForm();
-        }
       }}
       initialValues={initialFormValues}
       validate={validate}
