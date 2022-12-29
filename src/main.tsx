@@ -13,6 +13,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import PrivateRoute from "./utils/PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -25,11 +26,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/unapproved-resources",
-    element: <AdminUnapprovedResources />,
+    element: (
+      <PrivateRoute>
+        <AdminUnapprovedResources />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/admin/unapproved-resources/:resource",
-    element: <AdminUnapprovedResource />,
+    element: (
+      <PrivateRoute>
+        <AdminUnapprovedResource />
+      </PrivateRoute>
+    ),
   },
 ]);
 
