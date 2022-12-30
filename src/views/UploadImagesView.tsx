@@ -31,14 +31,11 @@ const Form: React.FC = () => {
   const resetRef = useRef<any>(null);
   const createRawImages = (data: FormValues) => {
     const formData = new FormData();
-    console.log(data.images);
     data.images.forEach((image) => {
       formData.append("images", image);
     });
     formData.append("resource", data.name);
-    for (const key of formData.keys()) {
-      console.log(key);
-    }
+
     return axios.post(`${import.meta.env.VITE_BACK_URL}/images`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -91,7 +88,6 @@ const Form: React.FC = () => {
                 key={index}
                 src={URL.createObjectURL(image)}
                 onRemove={() => {
-                  console.log("removed");
                   setFieldValue(
                     "images",
                     values.images.filter((_, i) => i !== index)

@@ -1,56 +1,10 @@
-import React, { Suspense, lazy } from "react";
+import App from "./App";
 import ReactDOM from "react-dom/client";
-import UploadImagesView from "./views/UploadImagesView";
-const LoginView = lazy(() => import("./views/LoginView"));
-const AdminUnapprovedResources = lazy(
-  () => import("./views/AdminUnapprovedRecources")
-);
-const AdminUnapprovedResource = lazy(
-  () => import("./views/AdminUnapprovedResource")
-);
-import LoadingSpinner from "./components/common/LoadingSpinner";
-import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
-import PrivateRoute from "./utils/PrivateRoute";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <UploadImagesView />,
-  },
-  {
-    path: "/login",
-    element: <LoginView />,
-  },
-  {
-    path: "/admin/unapproved-resources",
-    element: (
-      <PrivateRoute>
-        <AdminUnapprovedResources />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/admin/unapproved-resources/:resource",
-    element: (
-      <PrivateRoute>
-        <AdminUnapprovedResource />
-      </PrivateRoute>
-    ),
-  },
-]);
-
-const queryClient = new QueryClient();
+import { Provider as ReduxProvider } from "react-redux";
+import { store } from "./stores/store";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <div className="bg-gradient-to-br from-[#141625] to-[#252945] min-h-screen">
-    <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<LoadingSpinner />}>
-        <RouterProvider router={router} />
-      </Suspense>
-      <ReactQueryDevtools initialIsOpen={true} />
-    </QueryClientProvider>
-  </div>
+  <ReduxProvider store={store}>
+    <App />
+  </ReduxProvider>
 );

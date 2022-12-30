@@ -22,12 +22,11 @@ const AdminUnapprovedRecources: React.FC = () => {
     );
   };
   const res = useQuery("getUnapprovedResources", fetchUnapprovedResources);
-  console.log(res);
+
   if (res.isLoading) {
     return <LoadingSpinner />;
   }
   if (res.error) {
-    console.log("err here");
     return <span>Error</span>;
   }
   if (res.data && res.data.data.resources.length === 0) {

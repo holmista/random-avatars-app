@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../stores/authSlice";
 
 interface FormValues {
   id: string;
@@ -26,6 +28,7 @@ const validate = (values: FormValues) => {
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitForm = async (values: FormValues) => {
     try {
@@ -33,8 +36,10 @@ const LoginForm: React.FC = () => {
         withCredentials: true,
       });
       navigate("/admin/unapproved-resources");
+      dispatch(setAuth(true));
     } catch (err) {
       console.log(err);
+      dispatch(setAuth(false));
     }
   };
 
