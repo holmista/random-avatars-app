@@ -107,7 +107,10 @@ const Form: React.FC = () => {
           </div>
           {errors.name && <ErrorMessage status={errors.name} success={false} />}
           {errors.images && (
-            <ErrorMessage status={errors.images} success={false} />
+            <ErrorMessage
+              status="10 images should be uploaded"
+              success={false}
+            />
           )}
           {mutation.data && (
             <ErrorMessage

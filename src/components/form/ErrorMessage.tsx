@@ -34,7 +34,7 @@ const ErrorMessage: React.FC<Props> = ({ status, success }) => {
     <animated.div
       className={
         success
-          ? "fixed bottom-0 left-0 right-0 p-4 bg-green-300 text-white text-center transition-all duration-500 ease-in-out"
+          ? "fixed bottom-0 left-0 right-0 p-4 bg-green-300 text-green-800 text-center transition-all duration-500 ease-in-out"
           : "fixed bottom-0 left-0 right-0 p-4 bg-red-500 text-white text-center transition-all duration-500 ease-in-out"
       }
       style={props}
