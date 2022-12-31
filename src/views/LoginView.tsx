@@ -38,7 +38,6 @@ const LoginForm: React.FC = () => {
       navigate("/admin/unapproved-resources");
       dispatch(setAuth(true));
     } catch (err) {
-      console.log(err);
       dispatch(setAuth(false));
     }
   };
